@@ -3,3 +3,5 @@ version: ${project.version}
 main: top.retarders.dalobby.DaLobby
 authors: [ pcranaway ]
 description: lesss goo
+depend:
+  - WorldEdit
