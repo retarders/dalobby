@@ -1,14 +1,12 @@
 package top.retarders.dalobby;
 
+import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Sound;
+import org.bukkit.*;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -67,7 +65,15 @@ public class DaLobby extends JavaPlugin {
                 DaLobby.getPlugin(DaLobby.class), "BungeeCord", out.toByteArray());
         }
 
-        public void fetch() {}
+        public void fetch() {
+            // this is async
+            ByteArrayDataOutput out = ByteStreams.newDataOutput();
+            out.writeUTF("PlayerCount");
+            out.writeUTF(this.server);
+
+            Bukkit.getServer().sendPluginMessage(
+                DaLobby.getPlugin(DaLobby.class), "BungeeCord", out.toByteArray());
+        }
     }
 
     private List<GameSign> signs = new ArrayList<>();
@@ -104,6 +110,28 @@ public class DaLobby extends JavaPlugin {
         this.loadSigns();
 
         this.getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
+        this.getServer().getMessenger().registerIncomingPluginChannel(
+            this, "BungeeCord", (channel, player, message) -> {
+                if (channel != "BungeeCord")
+                    return;
+
+                ByteArrayDataInput in = ByteStreams.newDataInput(message);
+                String subchannel = in.readUTF();
+
+                if (subchannel == "PlayerCount") {
+                    String server = in.readUTF();
+                    int playercount = in.readInt();
+
+                    Optional<GameSign> signOpt =
+                        signs.stream().filter(sign -> sign.server == server).findFirst();
+
+                    if (signOpt.isPresent()) {
+                        GameSign sign = signOpt.get();
+
+                        sign.players = playercount;
+                    }
+                }
+            });
 
         this.getServer().getScheduler().scheduleSyncRepeatingTask(
             this, () -> refreshSigns(), 20L * 3, 20L * 3);
