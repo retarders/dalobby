@@ -1,8 +1,5 @@
 package top.retarders.dalobby;
 
-import java.util.ArrayList;
-import java.util.List;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Sound;
@@ -15,6 +12,9 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class DaLobby extends JavaPlugin {
     enum Game {
@@ -53,22 +53,18 @@ public class DaLobby extends JavaPlugin {
         public void fetch() {}
     }
 
-    // clang-format off
-    private static Location[] SIGNS = new Location[] {
-        new Location(Bukkit.getWorld("world"), 1, 61, 5),
-        new Location(Bukkit.getWorld("world"), 0, 61, 5)
-    };
-    // clang-format on
-
     private List<GameSign> signs = new ArrayList<>();
 
-    public void loadSigns() {
-        for (Location location : SIGNS) {
-            Sign block = (Sign) location.getBlock().getState();
-            String server = block.getLine(0).replace("[", "").replace("]", "");
+    public void loadSign(int x, int y, int z) {
+        Sign sign = (Sign) this.getServer().getWorld("world").getBlockAt(x, y, z).getState();
+        String server = sign.getLine(0).replace("[", "").replace("]", "");
 
-            this.signs.add(new GameSign(server, block));
-        }
+        this.signs.add(new GameSign(server, sign));
+    }
+
+    public void loadSigns() {
+        this.loadSign(1, 61, 5);
+        this.loadSign(-1, 61, 5);
     }
 
     public void refreshSigns() {
@@ -80,6 +76,8 @@ public class DaLobby extends JavaPlugin {
                 ChatColor.LIGHT_PURPLE.toString() + sign.players + ChatColor.RESET + "/"
                     + ChatColor.DARK_PURPLE + sign.maxPlayers);
 
+            sign.block.update();
+
             // TODO: Make line 4 the map
         });
     }
@@ -87,7 +85,6 @@ public class DaLobby extends JavaPlugin {
     @Override
     public void onEnable() {
         this.loadSigns();
-        this.refreshSigns();
 
         this.getServer().getScheduler().scheduleSyncRepeatingTask(
             this, () -> refreshSigns(), 20L * 3, 20L * 3);
