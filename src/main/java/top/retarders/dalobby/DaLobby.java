@@ -1,5 +1,7 @@
 package top.retarders.dalobby;
 
+import com.google.common.io.ByteArrayDataOutput;
+import com.google.common.io.ByteStreams;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -18,6 +20,7 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.plugin.messaging.PluginMessageListener;
 
 public class DaLobby extends JavaPlugin {
     enum Game {
@@ -51,6 +54,17 @@ public class DaLobby extends JavaPlugin {
             // the server name convention is $gamemode-$id
             this.gamemode = Game.valueOf(server.split("-")[0].toUpperCase());
             this.gameId = Integer.parseInt(server.split("-")[1]);
+        }
+
+        public void send(Player player) {
+            player.sendMessage(ChatColor.LIGHT_PURPLE + "Sending you to " + this.server);
+
+            ByteArrayDataOutput out = ByteStreams.newDataOutput();
+            out.writeUTF("Connect");
+            out.writeUTF(this.server);
+
+            player.sendPluginMessage(
+                DaLobby.getPlugin(DaLobby.class), "BungeeCord", out.toByteArray());
         }
 
         public void fetch() {}
@@ -89,6 +103,8 @@ public class DaLobby extends JavaPlugin {
     public void onEnable() {
         this.loadSigns();
 
+        this.getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
+
         this.getServer().getScheduler().scheduleSyncRepeatingTask(
             this, () -> refreshSigns(), 20L * 3, 20L * 3);
 
@@ -124,8 +140,7 @@ public class DaLobby extends JavaPlugin {
                     if (firstOpt.isPresent()) {
                         GameSign gameSign = firstOpt.get();
 
-                        event.getPlayer().sendMessage(
-                            ChatColor.LIGHT_PURPLE + "Sending you to " + gameSign.server);
+                        gameSign.send(event.getPlayer());
                     }
                 }
             }
