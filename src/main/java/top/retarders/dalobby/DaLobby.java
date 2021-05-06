@@ -1,20 +1,23 @@
 package top.retarders.dalobby;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.java.JavaPlugin;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class DaLobby extends JavaPlugin {
     enum Game {
@@ -105,6 +108,25 @@ public class DaLobby extends JavaPlugin {
 
                 player.sendMessage(ChatColor.translateAlternateColorCodes(
                     '&', "&7We hope you enjoy your stay, press any signs to join games"));
+            }
+
+            @EventHandler
+            public void onInteract(PlayerInteractEvent event) {
+                if (event.getAction() == Action.RIGHT_CLICK_BLOCK
+                    && event.getClickedBlock().getType() == Material.WALL_SIGN) {
+
+                    Optional<GameSign> firstOpt =
+                        signs.stream()
+                            .filter(sign -> sign.block.getLocation().equals(event.getClickedBlock().getLocation()))
+                            .findFirst();
+
+                    if (firstOpt.isPresent()) {
+                        GameSign gameSign = firstOpt.get();
+
+                        event.getPlayer().sendMessage(
+                            ChatColor.LIGHT_PURPLE + "Sending you to " + gameSign.server);
+                    }
+                }
             }
 
             @EventHandler
