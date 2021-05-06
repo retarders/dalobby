@@ -129,12 +129,13 @@ public class DaLobby extends JavaPlugin {
                         GameSign sign = signOpt.get();
 
                         sign.players = playercount;
+                        // refresh sign
                     }
                 }
             });
 
         this.getServer().getScheduler().scheduleSyncRepeatingTask(
-            this, () -> refreshSigns(), 20L * 3, 20L * 3);
+            this, () -> signs.forEach(GameSign::fetch), 20L * 3, 20L * 3);
 
         Location spawnpoint =
             this.getServer().getWorld("world").getHighestBlockAt(0, 0).getLocation().add(0, 3, 0);
