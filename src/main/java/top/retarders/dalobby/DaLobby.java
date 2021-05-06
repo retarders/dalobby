@@ -114,10 +114,11 @@ public class DaLobby extends JavaPlugin {
             public void onInteract(PlayerInteractEvent event) {
                 if (event.getAction() == Action.RIGHT_CLICK_BLOCK
                     && event.getClickedBlock().getType() == Material.WALL_SIGN) {
-
                     Optional<GameSign> firstOpt =
                         signs.stream()
-                            .filter(sign -> sign.block.getLocation().equals(event.getClickedBlock().getLocation()))
+                            .filter(sign
+                                -> sign.block.getLocation().equals(
+                                    event.getClickedBlock().getLocation()))
                             .findFirst();
 
                     if (firstOpt.isPresent()) {
