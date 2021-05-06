@@ -10,11 +10,11 @@ Features
 
 - Very Basic Environment Control
 
-    - Players can hit each other without damage
-    - No block placing
-    - No block breaking
-    - No hunger
-    - No void (redirects to spawnpoint)
+  - Players can hit each other without damage
+  - No block placing
+  - No block breaking
+  - No hunger
+  - No void (redirects to spawnpoint)
 
 - | Game Signs
   | They must be placed in the lobby (before the plugin is on) and be in the format of
