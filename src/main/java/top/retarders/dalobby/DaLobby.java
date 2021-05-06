@@ -74,6 +74,17 @@ public class DaLobby extends JavaPlugin {
             Bukkit.getServer().sendPluginMessage(
                 DaLobby.getPlugin(DaLobby.class), "BungeeCord", out.toByteArray());
         }
+
+        public void refresh() {
+            this.block.setLine(
+                0, ChatColor.DARK_PURPLE + ChatColor.BOLD.toString() + this.gamemode.toString());
+
+            this.block.setLine(1,
+                ChatColor.LIGHT_PURPLE.toString() + this.players + ChatColor.RESET + "/"
+                    + ChatColor.DARK_PURPLE + this.maxPlayers);
+
+            this.block.update();
+        }
     }
 
     private List<GameSign> signs = new ArrayList<>();
@@ -88,21 +99,6 @@ public class DaLobby extends JavaPlugin {
     public void loadSigns() {
         this.loadSign(1, 61, 5);
         this.loadSign(-1, 61, 5);
-    }
-
-    public void refreshSigns() {
-        this.signs.forEach(sign -> {
-            sign.block.setLine(
-                0, ChatColor.DARK_PURPLE + ChatColor.BOLD.toString() + sign.gamemode.toString());
-
-            sign.block.setLine(1,
-                ChatColor.LIGHT_PURPLE.toString() + sign.players + ChatColor.RESET + "/"
-                    + ChatColor.DARK_PURPLE + sign.maxPlayers);
-
-            sign.block.update();
-
-            // TODO: Make line 4 the map
-        });
     }
 
     @Override
@@ -129,7 +125,8 @@ public class DaLobby extends JavaPlugin {
                         GameSign sign = signOpt.get();
 
                         sign.players = playercount;
-                        // refresh sign
+
+                        sign.refresh();
                     }
                 }
             });
