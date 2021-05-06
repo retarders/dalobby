@@ -23,5 +23,5 @@ jobs:
     - name: Upload artifact
       uses: actions/upload-artifact@v1
       with:
-        name: devenv
+        name: dalobby
         path: target/dalobby-da.jar
