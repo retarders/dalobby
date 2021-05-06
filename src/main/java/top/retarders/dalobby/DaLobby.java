@@ -15,6 +15,7 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -192,6 +193,11 @@ public class DaLobby extends JavaPlugin {
 
             @EventHandler
             public void onBlockPlace(BlockPlaceEvent event) {
+                event.setCancelled(true);
+            }
+
+            @EventHandler
+            public void onFoodLevelChange(FoodLevelChangeEvent event) {
                 event.setCancelled(true);
             }
         }, this);
