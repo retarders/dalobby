@@ -18,6 +18,7 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.messaging.PluginMessageListener;
 
@@ -141,6 +142,8 @@ public class DaLobby extends JavaPlugin {
         this.getServer().getPluginManager().registerEvents(new Listener() {
             @EventHandler
             public void onJoin(PlayerJoinEvent event) {
+                event.setJoinMessage(null);
+
                 Player player = event.getPlayer();
 
                 event.getPlayer().teleport(spawnpoint);
@@ -199,6 +202,11 @@ public class DaLobby extends JavaPlugin {
             @EventHandler
             public void onFoodLevelChange(FoodLevelChangeEvent event) {
                 event.setCancelled(true);
+            }
+
+            @EventHandler
+            public void onQuit(PlayerQuitEvent event) {
+                event.setQuitMessage(null);
             }
         }, this);
     }
